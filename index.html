@@ -1,0 +1,27 @@
+<!-- 
+ver este artigo:
+http://blog.getelementsbyidea.com/load-a-module-on-demand-with-angularjs/
+-->
+
+<!DOCTYPE html>
+<html ng-app="lazyapp">
+
+    <head>
+        <title>Lazying Loading Routes</title>
+        <link rel="stylesheet" href="style.css">
+    </head>
+
+    <body>
+        <h3>Lazying Loading Routes: <a href="https://gist.github.com/marcoslin/b59cfa9a9a44bde04f9f" target="_blank">Source</a></h3>
+                
+        <div ui-view></div>
+
+        <script src="/lib/angular.min.js" type="text/javascript"></script>
+        <script src="/lib/angular-ui-router.min.js" type="text/javascript"></script>
+        <script src="/lib/ocLazyLoad.min.js" type="text/javascript"></script>
+        
+        <script src="app.js" type="text/javascript"></script>
+        <script src="/home/home.js" type="text/javascript"></script>
+    </body>
+
+</html>
