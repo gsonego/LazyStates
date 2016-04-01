@@ -5,12 +5,12 @@
         $stateProvider
             .state('home', {
                 url: '/home',
-                templateUrl: '/home/home.html',
+                templateUrl: '/app/components/home/home.html',
                 controller: 'HomeCtrl'
             });
 
         $urlRouterProvider.otherwise(function ($injector, $location) {
-            console.log("nao achei a rota solicitada");
+            //console.log("nao achei a rota solicitada");
             // aqui dá pra fazer algum tratamento quando
             // a rota não for conhecida... por enquanto vamos para a home
             return '/home';
@@ -45,35 +45,40 @@
         //});
         
         $rootScope.$on('$stateNotFound', function(event, unfoundState, fromState, fromParams) {
-            $log.log("$stateNotFound unfoundState: ", unfoundState.to);
+            //$log.log("$stateNotFound unfoundState: ", unfoundState.to);
             //$log.log("$stateNotFound fromState: ", fromState);
             //$log.log("$stateNotFound fromParams: ", fromParams);
 
             // funcoes de apoio
-            var templateName = function(templateStr) {
-                var templateStates = templateStr.split(".");
-                var lastState = templateStates[templateStates.length-1];
-                var retorno = templateStr.replace('.','/') + '/' + lastState + '.html';
+            var toLowerCamelCase = function (str) {
+                return str.replace(/[^A-Za-z0-9]/g, ' ').replace(/^\w|[A-Z]|\b\w|\s+/g, function (match, index) {
+                    if (+match === 0 || match === '-' || match === '.' ) {
+                        return ""; // or if (/\s+/.test(match)) for white spaces
+                    }
+                    return index === 0 ? match.toLowerCase() : match.toUpperCase();
+                });
+            };
 
-                return retorno;   
+            var getFileName = function(state, type) {
+                var stateParts = state.split(".");
+                var firstPart = stateParts[0];
+
+                var fileName = toLowerCamelCase(state); //.replace(/[.]/g, "_");
+                var filePath = firstPart + "/" + type + "/" + fileName + "." + type;
+                
+                var retorno = 'app/components/' + filePath;
+                return retorno;  
             };
             
-            var scriptName = function(scriptStr) {
-                var scriptStates = scriptStr.split(".");
-                var lastScriptState = scriptStates[scriptStates.length-1];
-                var retorno = scriptStr.replace('.','/') + '/' + lastScriptState + '.js';
-
-                return retorno;   
-            };
-            
-            var controllerName = function(controllerStr) {
-                var str = controllerStr.replace('.', ' ');
- 
+            var getControllerName = function(controllerStr) {
+                var str = controllerStr.replace(/[.]/g, ' ');
+                
                 var toPascalCase = str.replace(/\w\S*/g, function(tStr) { 
-                    return tStr.charAt(0).toUpperCase() + tStr.substr(1).toLowerCase(); 
+                    return tStr.charAt(0).toUpperCase() + 
+                           tStr.substr(1).toLowerCase();
                 });
                 
-                return toPascalCase.replace(' ', '') + 'Ctrl';
+                return toPascalCase.replace(/ /g, '') + 'Ctrl';
             };
 
             // inicia a análise de estados
@@ -88,30 +93,30 @@
                 sep = '.';
                 
                 if (!$state.get(statePart)) {
-                    $log.log(statePart + ' não está configurado!');
+                    //$log.log(statePart + ' não está configurado!');
                     
-                    var scriptPart = scriptName(statePart);
+                    var scriptPart = getFileName(statePart, "js");
                     
                     scriptList.push(scriptPart);
                     
                     appStateProvider.state(statePart, 
                     {
                         url: '/' + statePart,
-                        templateUrl: templateName(statePart),
-                        controller: controllerName(statePart)
+                        templateUrl: getFileName(statePart, "html"),
+                        controller: getControllerName(statePart)
                     });
                     
-                } else {
-                    $log.log(statePart + ' já está configurado!');
+                //} else {
+                    //$log.log(statePart + ' já está configurado!');
                 }
             }
 
             // carrega os scripts
-            $log.log('carregando scripts');
-            $log.log(scriptList);
+            //$log.log('carregando scripts');
+            //$log.log(scriptList);
             
             $ocLazyLoad.load(scriptList).then(function() {
-                $log.log('scripts carregados');
+                //$log.log('scripts carregados');
                 if ($state.get(toState)) {
                     return $state.go(toState);
                 }
@@ -119,6 +124,4 @@
             
         });
     });
-
-    
 }();

@@ -1,0 +1,22 @@
+<h3>Lista de Usuários</h3>
+
+Mensagem: {{message}}
+
+<table>
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Nome</th>
+            <th>Departamento</th>
+        </tr>
+    </thead>
+    
+    <tbody>
+        <tr ng-repeat="usuario in usuarios">
+            <td>{{usuario.id}}</td>
+            <td>{{usuario.nome}}</td>
+            <td>{{usuario.departamento}}</td>
+        </tr>
+    </tbody>
+
+</table>
